@@ -11,19 +11,16 @@ mod my_rustc_hash;
 mod my_seahash;
 mod my_xxhash;
 
+const INPUT_SIZE: usize = 1000000;
+use std::fs::File;
+use std::io::prelude::*;
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use rand::Rng;
-    use test::Bencher;
 
-    use std::fs::File;
-    use std::io::prelude::*;
     use std::path::Path;
-
-    use hasher::Hasher;
-
-    const INPUT_SIZE: usize = 1000000;
 
     #[test]
     fn write_u64_input() {
@@ -54,6 +51,13 @@ mod tests {
             file.write_all("\n".as_bytes()).unwrap();
         }
     }
+}
+
+#[cfg(test)]
+mod benchmarks {
+    use super::*;
+    use hasher::Hasher;
+    use test::Bencher;
 
     const OPS_PER_ITER: usize = 1000;
 
@@ -99,73 +103,75 @@ mod tests {
         });
     }
 
-    #[bench]
-    fn bench_u64_ahash(b: &mut Bencher) {
-        bench_u64::<my_ahash::AHasher>(b);
+    mod u64 {
+        use super::*;
+        #[bench]
+        fn ahash(b: &mut Bencher) {
+            bench_u64::<my_ahash::AHasher>(b);
+        }
+        #[bench]
+        fn fastmurmur3(b: &mut Bencher) {
+            bench_u64::<my_fastmurmur3::FastMurmur3Hasher>(b);
+        }
+        #[bench]
+        fn highway(b: &mut Bencher) {
+            bench_u64::<my_highway::HighwayHasher>(b);
+        }
+        #[bench]
+        fn murmur3(b: &mut Bencher) {
+            bench_u64::<my_murmur3::MyMurmur3>(b);
+        }
+
+        #[bench]
+        fn rustc_hash(b: &mut Bencher) {
+            bench_u64::<my_rustc_hash::MyRustcHash>(b);
+        }
+        #[bench]
+        fn seahash(b: &mut Bencher) {
+            bench_u64::<my_seahash::SeaHasher>(b);
+        }
+        #[bench]
+        fn xxhash(b: &mut Bencher) {
+            bench_u64::<my_xxhash::XXHasher>(b);
+        }
     }
 
-    #[bench]
-    fn bench_string_ahash(b: &mut Bencher) {
-        bench_string::<my_ahash::AHasher>(b);
-    }
+    mod string {
+        use super::*;
 
-    #[bench]
-    fn bench_u64_fastmurmur3(b: &mut Bencher) {
-        bench_u64::<my_fastmurmur3::FastMurmur3Hasher>(b);
-    }
+        #[bench]
+        fn ahash(b: &mut Bencher) {
+            bench_string::<my_ahash::AHasher>(b);
+        }
 
-    #[bench]
-    fn bench_string_fastmurmur3(b: &mut Bencher) {
-        bench_string::<my_fastmurmur3::FastMurmur3Hasher>(b);
-    }
+        #[bench]
+        fn fastmurmur3(b: &mut Bencher) {
+            bench_string::<my_fastmurmur3::FastMurmur3Hasher>(b);
+        }
 
-    #[bench]
-    fn bench_u64_highway(b: &mut Bencher) {
-        bench_u64::<my_highway::HighwayHasher>(b);
-    }
+        #[bench]
+        fn highway(b: &mut Bencher) {
+            bench_string::<my_highway::HighwayHasher>(b);
+        }
 
-    #[bench]
-    fn bench_string_highway(b: &mut Bencher) {
-        bench_string::<my_highway::HighwayHasher>(b);
-    }
+        #[bench]
+        fn murmur3(b: &mut Bencher) {
+            bench_string::<my_murmur3::MyMurmur3>(b);
+        }
 
-    #[bench]
-    fn bench_u64_murmur3(b: &mut Bencher) {
-        bench_u64::<my_murmur3::MyMurmur3>(b);
-    }
+        #[bench]
+        fn rustc_hash(b: &mut Bencher) {
+            bench_string::<my_rustc_hash::MyRustcHash>(b);
+        }
 
-    #[bench]
-    fn bench_string_murmur3(b: &mut Bencher) {
-        bench_string::<my_murmur3::MyMurmur3>(b);
-    }
+        #[bench]
+        fn seahash(b: &mut Bencher) {
+            bench_string::<my_seahash::SeaHasher>(b);
+        }
 
-    #[bench]
-    fn bench_u64_rustc_hash(b: &mut Bencher) {
-        bench_u64::<my_rustc_hash::MyRustcHash>(b);
-    }
-
-    #[bench]
-    fn bench_string_rustc_hash(b: &mut Bencher) {
-        bench_string::<my_rustc_hash::MyRustcHash>(b);
-    }
-
-    #[bench]
-    fn bench_u64_seahash(b: &mut Bencher) {
-        bench_u64::<my_seahash::SeaHasher>(b);
-    }
-
-    #[bench]
-    fn bench_string_seahash(b: &mut Bencher) {
-        bench_string::<my_seahash::SeaHasher>(b);
-    }
-
-    #[bench]
-    fn bench_u64_xxhash(b: &mut Bencher) {
-        bench_u64::<my_xxhash::XXHasher>(b);
-    }
-
-    #[bench]
-    fn bench_string_xxhash(b: &mut Bencher) {
-        bench_string::<my_xxhash::XXHasher>(b);
+        #[bench]
+        fn xxhash(b: &mut Bencher) {
+            bench_string::<my_xxhash::XXHasher>(b);
+        }
     }
 }
