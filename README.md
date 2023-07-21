@@ -2,29 +2,29 @@
 
 Algorithms were tested on random u64 values and random size (10..100) strings consisting of random lowercase English letters.
 
-*Note: each iteration is hashing 1000 objects*
+*Note: each iteration is hashing 1000 objects. All measurements are in ns/iter*
 
-String:
-| Algorithm   | ns/iter | +- ns/iter |
-|-------------|---------|------------|
-| ahash       | 638     | 12         |
-| fastmurmur3 | 26,966  | 1,069      |
-| highway     | 45,237  | 1,412      |
-| murmur3     | 60,530  | 2,353      |
-| rustc_hash  | 637     | 10         |
-| seahash     | 29,387  | 877        |
-| xxhash      | 12,068  | 379        |
+### string
+| Name | Median | Deviation |
+|------|-------:|----------:|
+| ahash | 634 | 7 |
+| fastmurmur3 | 27948 | 338 |
+| highway | 44904 | 1170 |
+| murmur3 | 57447 | 736 |
+| rustc_hash | 634 | 6 |
+| seahash | 29717 | 730 |
+| xxhash | 12003 | 230 |
 
-u64:
-| Algorithm   | ns/iter | +- ns/iter |
-|-------------|---------|------------|
-| ahash       | 883     | 28         |
-| fastmurmur3 | 5,161   | 160        |
-| highway     | 39,604  | 552        |
-| murmur3     | 24,121  | 1,118      |
-| rustc_hash  | 892     | 24         |
-| seahash     | 12,960  | 332        |
-| xxhash      | 3,880   | 201        |
+### u64
+| Name | Median | Deviation |
+|------|-------:|----------:|
+| ahash | 882 | 11 |
+| fastmurmur3 | 3839 | 106 |
+| highway | 39459 | 920 |
+| murmur3 | 23009 | 373 |
+| rustc_hash | 882 | 13 |
+| seahash | 13301 | 319 |
+| xxhash | 3593 | 117 |
 
 
 As you can see, ahash and rustc-hash significantly outperform other algorithms. However, these algorithms are not *silver bullets*:
